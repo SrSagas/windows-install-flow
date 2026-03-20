@@ -98,14 +98,10 @@ function vitePluginManusDebugCollector(): Plugin {
     },
 
     configureServer(server: ViteDevServer) {
-      // POST /__manus__/logs: Browser sends logs (written directly to files)
       server.middlewares.use("/__manus__/logs", (req, res, next) => {
-        if (req.method !== "POST") {
-          return next();
-        }
+        if (req.method !== "POST") return next();
 
         const handlePayload = (payload: any) => {
-          // Write logs directly to files
           if (payload.consoleLogs?.length > 0) {
             writeToLogFile("browserConsole", payload.consoleLogs);
           }
@@ -150,10 +146,16 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  vitePluginManusRuntime(),
+  vitePluginManusDebugCollector(),
+];
 
 export default defineConfig({
-  base: '/',
+  base: "/",
   plugins,
   resolve: {
     alias: {
@@ -165,12 +167,12 @@ export default defineConfig({
   envDir: path.resolve(import.meta.dirname),
   root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.resolve(import.meta.dirname, "client/dist"), // <- Ajuste aqui
     emptyOutDir: true,
   },
   server: {
     port: 3000,
-    strictPort: false, // Will find next available port if 3000 is busy
+    strictPort: false,
     host: true,
     allowedHosts: [
       ".manuspre.computer",
