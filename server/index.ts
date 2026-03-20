@@ -12,9 +12,15 @@ async function startServer() {
 
   const staticPath = path.join(__dirname, "public");
 
-  app.use(express.static(staticPath));
+  // servir arquivos estáticos
+  app.use(express.static(staticPath, { index: false }));
 
-  app.get("*", (_req, res) => {
+  // fallback somente para rotas do frontend
+  app.get("/", (_req, res) => {
+    res.sendFile(path.join(staticPath, "index.html"));
+  });
+
+  app.get("/*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));
   });
 
