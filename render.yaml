@@ -1,11 +1,11 @@
-# render.yaml
 services:
   - type: web
     name: windows-install-flow
     env: node
-    branch: main
+    branch: master
     buildCommand: pnpm install && pnpm run build
-    startCommand: npx serve client/dist -s
+    # O comando de start pode ser simplificado, pois o Render cuidará do rewrite
+    startCommand: npx serve client/dist -l 3000 # -l para especificar a porta, -s para SPA fallback
     plan: free
     autoDeploy: true
     publish: client/dist
@@ -13,4 +13,8 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000 # Render usa essa variável internamente
+        value: 10000
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
