@@ -1,7 +1,7 @@
 import express from "express";
-import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createServer } from "http";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,14 +9,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 
-const staticPath = path.join(__dirname, "public");
+const publicPath = path.join(__dirname, "public");
 
-// servir arquivos estáticos
-app.use(express.static(staticPath));
+app.use(express.static(publicPath));
 
-// fallback somente se o arquivo não existir
-app.get("*", (req, res) => {
-  res.sendFile(path.join(staticPath, "index.html"));
+// fallback SPA somente para rotas sem extensão
+app.get("*", (req, res, next) => {
+  if (req.path.includes(".")) {
+    return next();
+  }
+
+  res.sendFile(path.join(publicPath, "index.html"));
 });
 
 const port = process.env.PORT || 3000;
