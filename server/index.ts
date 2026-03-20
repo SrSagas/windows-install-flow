@@ -10,7 +10,6 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // caminho correto da build do Vite
   const staticPath = path.join(__dirname, "public");
 
   app.use(express.static(staticPath));
