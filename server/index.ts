@@ -6,29 +6,21 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function startServer() {
-  const app = express();
-  const server = createServer(app);
+const app = express();
+const server = createServer(app);
 
-  const staticPath = path.join(__dirname, "public");
+const staticPath = path.join(__dirname, "public");
 
-  // servir arquivos estáticos
-  app.use(express.static(staticPath, { index: false }));
+// servir arquivos estáticos
+app.use(express.static(staticPath));
 
-  // fallback somente para rotas do frontend
-  app.get("/", (_req, res) => {
-    res.sendFile(path.join(staticPath, "index.html"));
-  });
+// fallback somente se o arquivo não existir
+app.get("*", (req, res) => {
+  res.sendFile(path.join(staticPath, "index.html"));
+});
 
-  app.get("/*", (_req, res) => {
-    res.sendFile(path.join(staticPath, "index.html"));
-  });
+const port = process.env.PORT || 3000;
 
-  const port = process.env.PORT || 3000;
-
-  server.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-}
-
-startServer().catch(console.error);
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
